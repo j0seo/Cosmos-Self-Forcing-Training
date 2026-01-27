@@ -1,0 +1,33 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+from omegaconf import DictConfig
+from fastgen.configs.methods.config_scm import create_config as scm_create_config
+from fastgen.configs.callbacks import EMA_CONST_CALLBACKS
+from fastgen.configs.net import CKPT_ROOT_DIR
+
+
+def create_config():
+    config = scm_create_config()
+
+    # Recommended setting for 2-step:
+    # config.model.sample_t_cfg.t_list = [80.0, 0.821, 0.0]
+    # config.model.student_sample_steps = 2
+
+    config.model.pretrained_model_path = f"{CKPT_ROOT_DIR}/cifar10/edm-cifar10-32x32-uncond-vp.pth"
+
+    config.model.use_ema = ["ema_9999", "ema_99995", "ema_9996"]
+    config.trainer.callbacks = DictConfig(
+        {k: v for k, v in config.trainer.callbacks.items() if not k.startswith("ema")}
+    )
+    config.trainer.callbacks.update(EMA_CONST_CALLBACKS)
+
+    # During training, it can help to sample beyond the max. inference time
+    config.model.net.max_t = 800.0
+    config.model.sample_t_cfg.max_t = config.model.net.max_t
+    config.model.sample_t_cfg.t_list = [80.0, 0.0]
+
+    config.trainer.max_iter = 350000
+    config.trainer.batch_size_global = 512
+
+    return config

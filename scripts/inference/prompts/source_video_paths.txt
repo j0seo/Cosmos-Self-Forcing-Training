@@ -1,0 +1,5 @@
+scripts/inference/examples/00_child_swings_rusty_swing_set.mp4
+scripts/inference/examples/01_impressionist_rubber_duck_sunset.mp4
+scripts/inference/examples/02_two_cyclists_stop_sign.mp4
+scripts/inference/examples/03_astronaut_cow_beach_van_gogh.mp4
+scripts/inference/examples/04_bird_flying_church_tower_clock.mp4
